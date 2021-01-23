@@ -12,10 +12,11 @@ app.use(currentUserRouter);
 app.use(signinRouter);
 app.use(signoutRouter);
 app.use(signupRouter);
-app.use(errorHandler);
 app.all('*',()=>{
   throw new NotFoundError();
 })
+app.use(errorHandler);
+
 app.listen(3000, () => {
   console.log("Listening on port 3000.");
 });
