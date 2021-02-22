@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(
   cookieSession({
     signed: false,
+    // secure: true,
   })
 );
 app.use(currentUserRouter);
