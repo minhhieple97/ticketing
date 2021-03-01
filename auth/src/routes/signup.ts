@@ -1,7 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
-import { validatorRequest } from "../middlewares/validator-request";
-import BadRequestError from "../errors/bad-request-error";
+import { BadRequestError, validatorRequest } from "@lmhticket/common";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 const router = express.Router();

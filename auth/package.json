@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lmhticket/common": "^1.0.9",
     "@types/bcrypt": "^3.0.0",
     "@types/cookie-session": "^2.0.42",
     "@types/express": "^4.17.11",
