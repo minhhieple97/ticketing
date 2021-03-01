@@ -9,20 +9,20 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
     </div>
   );
 };
-// AppComponent.getInitialProps = async (appContext) => {
-//   //   const client = buildClient(appContext.ctx);
-//   //   const { data } = await client.get("/api/users/currentuser");
-//   //   let pageProps = {};
-//   //   if (appContext.Component.getInitialProps) {
-//   //     //Kiểm tra getInitialProps được gọi ở Page nào thì mới trigger
-//   //     pageProps = await appContext.Component.getInitialProps(appContext.ctx); // Đứng từ AppComponent có thể trigger getInitialProps của Page.
-//   //   }
-//   //   return {
-//   //     pageProps,
-//   //     ...data,
-//   //   };
-//   return {};
-// };
+AppComponent.getInitialProps = async (appContext) => {
+  const client = buildClient(appContext.ctx);
+  const { data } = await client.get("/api/users/currentuser");
+  let pageProps = {};
+  if (appContext.Component.getInitialProps) {
+    //Kiểm tra getInitialProps được gọi ở Page nào thì mới trigger
+    pageProps = await appContext.Component.getInitialProps(appContext.ctx); // Đứng từ AppComponent có thể trigger getInitialProps của Page.
+  }
+  return {
+    pageProps,
+    ...data,
+  };
+  return {};
+};
 export default AppComponent;
 // Mặc định _app.js dùng để tạo ra custom default component
 // Next.js sẽ điều hướng dựa trên các file trong pages folder,  _app.js được tạo ra nhằm mục đích apply css của bootstrap cho tất cả các component, thay vì hiển thị component trong page thẳng ra màn hình luôn App(component _app.js) sẽ bọc component đó (component trong page) => đây là patternt HOC, mỗi component trong page sẽ là đối số (Component) và nhận pageProps làm props.

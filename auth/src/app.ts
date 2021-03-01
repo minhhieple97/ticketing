@@ -1,10 +1,9 @@
-import { errorHandler } from "./middlewares/error-handler";
+import { errorHandler, NotFoundError } from "@lmhticket/common";
 import express from "express";
 import { currentUserRouter } from "./routes/current-user";
 import { signinRouter } from "./routes/signin";
 import { signoutRouter } from "./routes/signout";
 import { signupRouter } from "./routes/signup";
-import NotFoundError from "./errors/not-found-error";
 ("./errors/");
 import cookieSession from "cookie-session";
 const app = express();
