@@ -1,18 +1,29 @@
-import { body } from 'express-validator';
+import { body } from "express-validator";
 import express, { Request, Response } from "express";
 import { requireAuth, validatorRequest } from "@lmhticket/common";
-import Ticket from '../models/ticket';
+import Ticket from "../models/ticket";
 const router = express.Router();
-router.post("/api/tickets", requireAuth, [
-  body('title').not().isEmpty().withMessage('Title is required'),
-  body('price').isFloat({ gt: 0 }).not().isEmpty().withMessage('Price must be greater than 0')], validatorRequest, async (req: Request, res: Response) => {
+router.post(
+  "/api/tickets",
+  requireAuth,
+  [
+    body("title").not().isEmpty().withMessage("Title is required"),
+    body("price")
+      .isFloat({ gt: 0 })
+      .not()
+      .isEmpty()
+      .withMessage("Price must be greater than 0"),
+  ],
+  validatorRequest,
+  async (req: Request, res: Response) => {
     const { title, price } = req.body;
     const ticket = await Ticket.build({
       title,
       price,
-      userId: req.currentUser!.id
+      userId: req.currentUser!.id,
     });
     res.status(201).json(ticket);
-  });
+  }
+);
 
 export { router as createTicketRouter };
