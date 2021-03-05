@@ -9,4 +9,8 @@ Theo cấu hình mặc định, khi Nats-server gửi message và stan(client) n
 <!-- Cách thức Nats-server xác định client còn hoạt động hay không  -->
 - Trên môi trường development khi chúng ta refresh lại code của file listener thì sẽ tạo ra một stan(client) mới, Nats-server đang connect đến stan cũ theo mặc định nó sẽ cho rằng stan đang ngưng hoạt động hoặc có vấn đề gì đó nên sẽ không ngắt kết nối với client này mà chỉ chuyển nó sang trạng thái offline mà thôi, Nats-server sẽ hold message và sẽ gửi lại messge đến stan cũ nếu sau 30s stan cũ không hoạt động trở lại thì Nats-server sẽ gửi đến stan mới được tạo ra => điều này lý giải tại sao khi refresh code ở listener thì message không được gửi ngay lập tức đến stan mới, để khắc phục vấn đề này chúng ta sẽ gửi một thông báo từ client cho nats-server trước khi client stop
 
+<!-- Một số option cần chú ý của Nats -->
+setDeliverAllAvailable : Stan sẽ nhận được tất cả các message đã được xuất bản của channel mà nó subcribe trước khi Stan này được tạo ra. 
+setManualAckMode : Theo mặc định Nats-server sẽ coi Stan nhận được message thì message đó đã được xử lý nhưng nếu chúng ta muốn trì hoãn hoặc hoặc đẩy nhanh quá trình xác nhận một message thì có thể sử dụng option này đi kèm với setAckWait(time) , sau khoảng thời gian time thì Nats-server sẽ gửi lại.
 <!-- Một số vấn đề phát sinh khi scale, nhân bản các service  -->
+- Một service được nhân bản để phục vụ quá trình scale 
