@@ -6,12 +6,16 @@ const start = async () => {
     if (!process.env.MONGO_URI || !process.env.JWT_KEY) {
       throw new Error("Missing environment variable,");
     }
+    if (!process.env.NATS_CLIENT_ID || !process.env.NATS_URL || !process.env.NATS_CLUSTER_ID) {
+      throw new Error("Missing environment variable NATS");
+    }
+
     await mongoose.connect(process.env.MONGO_URI!, {
       useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    await natsWrapper.connect("ticketing", "123", "http://nats-service:4222");
+    await natsWrapper.connect(process.env.NATS_CLUSTER_ID, process.env.NATS_CLIENT_ID, process.env.NATS_URL);
     natsWrapper.client.on("close", () => {
       console.log("NATS connection closed");
       process.exit();

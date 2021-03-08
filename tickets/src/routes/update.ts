@@ -1,3 +1,5 @@
+import { natsWrapper } from './../nats-wrapper';
+import { TicketUpdatedPublisher } from './../events/publishers/ticket-updated-publisher';
 import { NextFunction } from 'express';
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
@@ -31,7 +33,13 @@ router.put(
             await ticket.set({
                 title: req.body.title,
                 price: req.body.price
-            }).save()
+            }).save();
+            new TicketUpdatedPublisher(natsWrapper.client).publish({
+                id: ticket.id,
+                title: ticket.title,
+                price: ticket.price,
+                userId: ticket.userId
+            })
             res.send(ticket);
         } catch (error) {
             next(error)
