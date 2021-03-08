@@ -11,8 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@lmhticket/common": "^2.0.18",
-    "@sgtickets/common": "^1.0.13",
+    "@lmhticket/common": "^2.0.21",
     "@types/node": "^14.14.32",
     "node-nats-streaming": "^0.3.2",
     "ts-node-dev": "^1.1.6",
