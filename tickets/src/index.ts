@@ -7,7 +7,7 @@ const start = async () => {
       throw new Error("Missing environment variable,");
     }
     if (!process.env.NATS_CLIENT_ID || !process.env.NATS_URL || !process.env.NATS_CLUSTER_ID) {
-      throw new Error("Missing environment variable NATS");
+      throw new Error("Missing environment variable of NATS streaming server");
     }
 
     await mongoose.connect(process.env.MONGO_URI!, {
