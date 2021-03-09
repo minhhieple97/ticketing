@@ -1,21 +1,27 @@
-import mongoose from 'mongoose';
-import express, { Request, Response } from 'express';
-import { requireAuth, validatorRequest, NotFoundError } from '@lmhticket/common';
-import { body } from 'express-validator';
-import { Ticket } from '../models/ticket';
-import { Order } from '../models/order';
+import mongoose from "mongoose";
+import express, { Request, Response } from "express";
+import {
+  requireAuth,
+  validatorRequest,
+  NotFoundError,
+  OrderStatus,
+  BadRequestError,
+} from "@lmhticket/common";
+import { body } from "express-validator";
+import { Ticket } from "../models/ticket";
+import { Order } from "../models/order";
 
 const router = express.Router();
 
 router.post(
-  '/api/orders',
+  "/api/orders",
   requireAuth,
   [
-    body('ticketId')
+    body("ticketId")
       .not()
       .isEmpty()
       .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
-      .withMessage('TicketId must be provided'),
+      .withMessage("TicketId must be provided"),
   ],
   validatorRequest,
   async (req: Request, res: Response) => {
@@ -26,17 +32,26 @@ router.post(
     if (!ticket) {
       throw new NotFoundError();
     }
+    const isReserved = await ticket.isReserved();
+    if (isReserved) {
+      throw new BadRequestError("Ticket already reserved.");
+    }
 
-    // Make sure that this ticket is not already reserved
-
-    // Calculate an expiration date for this order
-
+    // Calculate an expiration date for this order (15 minute)
+    const expiration = new Date();
+    expiration.setSeconds(expiration.getSeconds() + 15 * 60);
     // Build the order and save it to the database
-
+    const order = Order.build({
+      userId: req.currentUser!.id,
+      status: OrderStatus.Created,
+      expiresAt: expiration,
+      ticket,
+    });
+    const result = await order.save();
     // Publish an event saying that an order was created
 
-    res.send({});
+    res.status(201).send(result);
   }
 );
-
+ 
 export { router as newOrderRouter };
