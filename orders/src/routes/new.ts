@@ -55,10 +55,11 @@ router.post(
       id: order.id,
       status: OrderStatus.Created,
       userId: order.status,
+      version: result.version,
       expiresAt: order.expiresAt.toISOString(),
       ticket: {
         id: ticket.id,
-        price: ticket.price
+        price: ticket.price,
       }
     });
     res.status(201).send(result);
