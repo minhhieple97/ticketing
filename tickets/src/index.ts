@@ -1,5 +1,8 @@
+import { OrderCancelledEvent } from '@lmhticket/common';
 import mongoose from "mongoose";
 import app from "./app";
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 import { natsWrapper } from "./nats-wrapper";
 const start = async () => {
   try {
@@ -20,6 +23,8 @@ const start = async () => {
       console.log("NATS connection closed");
       process.exit();
     });
+    new OrderCancelledListener(natsWrapper.client).listen()
+    new OrderCreatedListener(natsWrapper.client).listen()
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
   } catch (error) {

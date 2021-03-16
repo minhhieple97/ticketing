@@ -6,7 +6,8 @@ import { body } from 'express-validator';
 import {
     NotFoundError,
     requireAuth,
-    NotAuthorized
+    NotAuthorized,
+    BadRequestError
 } from '@lmhticket/common';
 import Ticket from '../models/ticket';
 
@@ -26,6 +27,9 @@ router.put(
             const ticket = await Ticket.findById(req.params.id);
             if (!ticket) {
                 throw new NotFoundError();
+            }
+            if (ticket.orderId) {
+                throw new BadRequestError('Cannot edit a ticket reserved.')
             }
             if (ticket.userId !== req.currentUser!.id) {
                 throw new NotAuthorized()
