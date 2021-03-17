@@ -12,3 +12,6 @@ Video 282: Ở file deploy của Nats chúng ta expose 2 port của Nats-server 
 Xem lại video 284,285,286,287 nói về vấn đề giao tiếp giữa các service khi thiết kế hệ thống dựa trên mô hình microservice 
 
 - chạy lại test thoe hướng dẫn ở video 379 từ phút thứ 15
+
+
+- chạy lại để test ở video 411 
