@@ -15,3 +15,5 @@ Xem lại video 284,285,286,287 nói về vấn đề giao tiếp giữa các se
 
 
 - chạy lại để test ở video 411 
+
+- thêm khóa secret-key cho stripe kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=sk_test_51HvGXbK1Wneh2vLAZrE1NFiEjCdflyl9wVeQFkt5ZM2p7GrHnV9IiUi338rqKA9eu39Nxcpr7VLIi9Kth20LORBJ00ClLG8LGe

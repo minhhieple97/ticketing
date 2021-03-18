@@ -1,8 +1,11 @@
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
 import { OrderCancelledEvent } from "@lmhticket/common";
 import mongoose from "mongoose";
 import app from "./app";
+import { Order } from "./models/order";
 
 import { natsWrapper } from "./nats-wrapper";
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 const start = async () => {
   try {
     if (!process.env.MONGO_URI || !process.env.JWT_KEY) {
@@ -32,6 +35,8 @@ const start = async () => {
     });
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+    new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCreatedListener(natsWrapper.client).listen();
   } catch (error) {
     console.error(error);
   }
