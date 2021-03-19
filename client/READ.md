@@ -12,3 +12,18 @@ getInitialProps được gọi trên client khi nào ?
 
 Video 216 : Giải thích cách giao tiếp giữa các pod khác namespace
 Một số issue của vấn đề này ở video 219,220
+
+
+AppComponent ở _app.js sẽ chịu trách nhiệm render cho tất cả cách page mà chúng ta tạo ra. 
+
+const AppComponent = ({ Component, pageProps, currentUser }) => {
+  return (
+    <div>
+      <Headers currentUser={currentUser}></Headers>
+      <Component {...pageProps}></Component>
+    </div>
+  );
+};
+
+ AppComponent sẽ nhận Component là một prop, giống như một hàm nhận một hàm khác là làm tham số đầu vào.
+ - Khi chúng tạo ra AppComponent ở file _app.js thì next.js sẽ render và gọi hàm getInitialProps ở AppComponent trước sau đó mới đến lượt trang đích vào gọi hàm getInitialProps ở trang đích đó, nếu chúng ta không triển khai AppComponent thì sẽ render ra thẳng trang đích và gọi hàm getInitialProps ở trang đích luôn.

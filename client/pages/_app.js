@@ -5,7 +5,9 @@ const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
     <div>
       <Headers currentUser={currentUser}></Headers>
-      <Component {...pageProps}></Component>
+      <div className="container" >
+        <Component currentUser={currentUser} {...pageProps}></Component>
+      </div>
     </div>
   );
 };
@@ -15,13 +17,12 @@ AppComponent.getInitialProps = async (appContext) => {
   let pageProps = {};
   if (appContext.Component.getInitialProps) {
     //Kiểm tra getInitialProps được gọi ở Page nào thì mới trigger
-    pageProps = await appContext.Component.getInitialProps(appContext.ctx); // Đứng từ AppComponent có thể trigger getInitialProps của Page.
+    pageProps = await appContext.Component.getInitialProps(appContext.ctx, client, data.currentUser); // Đứng từ AppComponent có thể trigger getInitialProps của Page.
   }
   return {
     pageProps,
     ...data,
   };
-  return {};
 };
 export default AppComponent;
 // Mặc định _app.js dùng để tạo ra custom default component
