@@ -5,7 +5,7 @@ function signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { doRequest, errors } = useRequest({
-    url: "/api/users/singin",
+    url: "/api/users/signin",
     method: "post",
     body: {
       email,

@@ -1,5 +1,5 @@
-import { natsWrapper } from '../nats-wrapper';
-import { OrderCreatedPublisher } from './../events/publishers/order-created-publisher';
+import { natsWrapper } from "../nats-wrapper";
+import { OrderCreatedPublisher } from "./../events/publishers/order-created-publisher";
 import mongoose from "mongoose";
 import express, { Request, Response } from "express";
 import {
@@ -12,9 +12,7 @@ import {
 import { body } from "express-validator";
 import { Ticket } from "../models/ticket";
 import { Order } from "../models/order";
-
 const router = express.Router();
-
 router.post(
   "/api/orders",
   requireAuth,
@@ -60,7 +58,7 @@ router.post(
       ticket: {
         id: ticket.id,
         price: ticket.price,
-      }
+      },
     });
     res.status(201).send(result);
   }

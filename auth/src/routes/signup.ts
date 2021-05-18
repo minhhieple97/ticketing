@@ -13,8 +13,7 @@ router.post(
       .isLength({ min: 4, max: 20 })
       .withMessage("Password must be between 4 and 20 characters"),
   ],
-  validatorRequest
-  ,
+  validatorRequest,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
@@ -32,9 +31,9 @@ router.post(
         process.env.JWT_KEY!
       );
       req.session = { jwt: userJwt };
-      res.status(201).send({});
+      res.status(201).send(user);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 );
