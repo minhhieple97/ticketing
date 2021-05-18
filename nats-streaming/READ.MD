@@ -20,7 +20,8 @@ Theo cấu hình mặc định, khi Nats-server gửi message và stan(client) n
 
 - Một service được nhân bản để phục vụ quá trình scale, mô phỏng một tính năng của ngân hàng đó là gửi và rút tiền
 
-* service account chịu trách nhiệm tăng giảm số tiền của user
+* service account chịu trách nhiệm tăng giảm số tiền của user, kiểm tra tra số tiền của mỗi user (account table)
+* service transaction chịu trách nhiệm tạo ra các yêu cầu nạp, rút tiền của user (account transaction)
 * publisher có nhiệm vụ tạo action (tăng,giảm)
 * Nats-streaming, quản lý các channel, publisher, listenner, điều phối các message
 
@@ -32,11 +33,18 @@ Theo cấu hình mặc định, khi Nats-server gửi message và stan(client) n
 * Nếu luồng này hoạt động đúng thứ tự thì không có gì để nói, nhưng trong thực tế sẽ có rất nhiều trường hợp luồng này không thể chạy đúng thứ tự.
   => Giả sử nhân bản 2 service account để phục vụ quá trình scale gọi là account1 và account2
 
-  <!-- Các trường hợp có thể xảy ra lỗi -->
+  <!-- Một số rất nhiều trường hợp có thể xảy ra lỗi -->
 
 - Trường hợp 1
   Nếu account1 nhận được action1 nhưng trong trường hợp có lỗi xảy ra ở account1 (có thể db bị lỗi connect)
-  => Theo mặc định Nats sẽ đợi sau 30s nếu account1 không gọi ack() thì nó sẽ gửi lại action1, nếu như account2 vẫn hoạt động bình thường và action2 và action3 lần lượt được publish thì rõ ràng quá trình này sẽ phát sinh lỗi do số dư tài khoản của user này không đủ.
+  => Theo mặc định Nats sẽ đợi sau 30s nếu account1 không gọi ack() thì nó sẽ gửi lại action1, nếu như account2 vẫn hoạt động bình thường và action2 và action3 lần lượt được publish thì rõ ràng quá trình này sẽ phát sinh lỗi do số dư tài khoản của user tại thời điểm gửi yêu cầu rút này không đủ.
 
 - Trường hợp 2
   Giả sử không có lỗi nào xảy ra action1 và action2 đều được handle nhưng ở action3 db xử lý bị trễ, giả sử quá trình ghi vào db mất 29.99999s, ghi vào db xong (đã trừ 100$) chưa kịp gọi hàm ack báo thành công thì đã sang giây thứ 30, lúc này theo mặc định Nats-streaming-server sẽ gửi lại message cho service account để xử lý => lệnh bị fail do không đủ số tiền.
+
+
+<!-- => Cách giải quyết:  -->
+
++ Giả sử: với mỗi yêu cầu withdraw, deposit ta lưu vào bảng Transaction, với mỗi bản ghi của từng user chúng ta sẽ tạo thêm một field mới đó là number, nó thể hiện thứ tự trước sau của bản ghi được tạo, với mỗi lần một sự kiện nạp, rút tiền phát ra thì sẽ kèm theo thông tin của transaction đó (bao gồm number - thứ tự của transaction).
++ Ở table account, có một trường đó là lastTransactionNumber thể hiện number transaction gần nhất mà service xử lý. 
+=> Khi có một transaction cần xử lý ở service account nó sẽ gần check thứ tự (so sánh number và lastTransactionNumber) =>  Nếu có bất kì sự cố nào khi xử lý các transaction gây ảnh hưởng đến thứ tự service account xử lý transaction điều này sẽ handle lỗi đó, nếu không đúng thứ tự đơn giản chúng ta chỉ cần reject event đó để Nats phân phối lại chúng.
